@@ -1,8 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { UserButton } from "@clerk/nextjs";
-
-import ThemeToggle from "@/components/theme-toggle";
+import InitialModal from "@/components/modals/initial-modal";
 
 import db from "@/lib/db";
 import initialProfile from "@/lib/initial-profile";
@@ -16,10 +14,5 @@ export default async function SetupPage() {
 
   if (!!server) return redirect(`/servers/${server.id}`);
 
-  return (
-    <main>
-      <UserButton afterSignOutUrl="/" />
-      <ThemeToggle />
-    </main>
-  );
+  return <InitialModal />;
 }
