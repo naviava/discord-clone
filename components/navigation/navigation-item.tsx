@@ -22,14 +22,17 @@ export default function NavigationItem({
   const params = useParams();
   const router = useRouter();
 
-  const onClick = useCallback(
+  const handleClick = useCallback(
     () => router.push(`/servers/${id}`),
     [id, router],
   );
 
   return (
     <ActionTooltip side="right" align="center" label={name}>
-      <button onClick={onClick} className="group relative flex items-center">
+      <button
+        onClick={handleClick}
+        className="group relative flex items-center"
+      >
         {/* Server active bar. */}
         <div
           className={cn(
