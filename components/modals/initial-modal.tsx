@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import FileUpload from "@/components/file-upload";
 import {
   Dialog,
   DialogContent,
@@ -64,10 +65,24 @@ export default function InitialModal() {
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <article className="space-y-8 px-6">
+            <main className="space-y-8 px-6">
               {/* Image uploader. */}
               <section className="flex items-center justify-center">
-                TODO: Image Upload
+                <FormField
+                  name="imageUrl"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <FileUpload
+                          endpoint="serverImage"
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
               </section>
               {/* Server name input field. */}
               <FormField
@@ -90,7 +105,7 @@ export default function InitialModal() {
                   </FormItem>
                 )}
               />
-            </article>
+            </main>
             <DialogFooter className="bg-gray-100 px-6 py-4">
               <Button variant="primary" disabled={isLoading}>
                 Create
