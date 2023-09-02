@@ -23,8 +23,7 @@ function FileUpload({ endpoint, value, onChange }: FileUploadProps) {
           fill
           src={value}
           alt="Server image"
-          objectFit="contain"
-          className="rounded-full"
+          className="rounded-full object-contain"
         />
         <button
           type="button"

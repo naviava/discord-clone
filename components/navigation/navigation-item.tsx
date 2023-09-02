@@ -49,7 +49,7 @@ export default function NavigationItem({
               "rounded-[16px] bg-primary/10 text-primary",
           )}
         >
-          <Image fill src={imageUrl} alt="Channel" objectFit="contain" />
+          <Image fill src={imageUrl} alt="Channel" className="object-contain" />
         </div>
       </button>
     </ActionTooltip>
