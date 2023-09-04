@@ -28,7 +28,15 @@ export async function POST(req: Request) {
           },
         },
       },
-      data: { channels: { create: { profileId: profile.id, name, type } } },
+      data: {
+        channels: {
+          create: {
+            profileId: profile.id,
+            name: name.toLowerCase().replace(/\s+/g, "-"),
+            type,
+          },
+        },
+      },
     });
 
     return NextResponse.json(server);
