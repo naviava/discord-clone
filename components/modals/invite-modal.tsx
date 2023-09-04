@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useState } from "react";
 
+import axios from "axios";
 import { Check, Copy, RefreshCw } from "lucide-react";
 
 import useOrigin from "@/hooks/use-origin";
@@ -16,7 +17,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import axios from "axios";
 
 export default function InviteModal() {
   const origin = useOrigin();

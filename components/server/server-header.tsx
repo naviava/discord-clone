@@ -1,5 +1,7 @@
 "use client";
 
+import { memo } from "react";
+
 import {
   ChevronDown,
   LogOut,
@@ -28,7 +30,7 @@ interface ServerHeaderProps {
   role?: MemberRole | undefined;
 }
 
-export default function ServerHeader({ server, role }: ServerHeaderProps) {
+function ServerHeader({ server, role }: ServerHeaderProps) {
   const { onOpen } = useModal();
 
   const isAdmin = role === MemberRole.ADMIN;
@@ -87,14 +89,20 @@ export default function ServerHeader({ server, role }: ServerHeaderProps) {
         {isModerator && <DropdownMenuSeparator />}
         {/* Delete server (only ADMIN). */}
         {isAdmin && (
-          <DropdownMenuItem className="cursor-pointer px-3 py-2 text-sm text-rose-500">
+          <DropdownMenuItem
+            onClick={() => onOpen("deleteServer", { server })}
+            className="cursor-pointer px-3 py-2 text-sm text-rose-500"
+          >
             Delete Server
             <Trash className="ml-auto h-4 w-4" />
           </DropdownMenuItem>
         )}
         {/* Leave server (only MODERATOR and GUEST). */}
         {!isAdmin && (
-          <DropdownMenuItem className="cursor-pointer px-3 py-2 text-sm text-rose-500">
+          <DropdownMenuItem
+            onClick={() => onOpen("leaveServer", { server })}
+            className="cursor-pointer px-3 py-2 text-sm text-rose-500"
+          >
             Leave Server
             <LogOut className="ml-auto h-4 w-4" />
           </DropdownMenuItem>
@@ -103,3 +111,5 @@ export default function ServerHeader({ server, role }: ServerHeaderProps) {
     </DropdownMenu>
   );
 }
+
+export default memo(ServerHeader);
