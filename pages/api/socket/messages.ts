@@ -66,6 +66,9 @@ export default async function handler(
     });
 
     const channelKey = `chat:${channelId}:messages`;
+    res?.socket?.server?.io?.emit(channelKey, message);
+
+    return res.status(200).json(message);
   } catch (err) {
     console.log("[MESSAGES_POST_ERROR]", err);
     return res.status(500).json({ message: "Internal Error" });
