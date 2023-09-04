@@ -3,8 +3,10 @@ import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 
 import { ClerkProvider } from "@clerk/nextjs";
+
 import ThemeProvider from "@/components/providers/theme-provider";
 import ModalProvider from "@/components/providers/modal-provider";
+import SocketProvider from "@/components/providers/socket-provider";
 
 import { cn } from "@/lib/utils";
 
@@ -24,15 +26,17 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body className={cn("bg-white dark:bg-[#313338]", font.className)}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem={false}
-            storageKey="discord-clone-theme"
-          >
-            <ModalProvider />
-            {children}
-          </ThemeProvider>
+          <SocketProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="dark"
+              enableSystem={false}
+              storageKey="discord-clone-theme"
+            >
+              <ModalProvider />
+              {children}
+            </ThemeProvider>
+          </SocketProvider>
         </body>
       </html>
     </ClerkProvider>
