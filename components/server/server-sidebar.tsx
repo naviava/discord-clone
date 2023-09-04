@@ -4,9 +4,13 @@ import { Hash, Mic, ShieldAlert, ShieldCheck, Video } from "lucide-react";
 
 import { ChannelType, MemberRole } from "@prisma/client";
 
+import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import ServerSection from "./server-section";
+import ServerChannel from "./server-channel";
 import ServerHeader from "./server-header";
 import ServerSearch from "./server-search";
+import ServerMember from "./server-member";
 
 import db from "@/lib/db";
 import currentProfile from "@/lib/current-profile";
@@ -63,9 +67,11 @@ export default async function ServerSidebar({ serverId }: ServerSidebarProps) {
 
   return (
     <div className="flex h-full w-full flex-col bg-[#f2f3f5] text-primary dark:bg-[#2b2d31]">
+      {/* Server name. */}
       <ServerHeader server={server} role={role} />
-      <ScrollArea>
+      <ScrollArea className="flex-1 px-3">
         <div className="mt-2">
+          {/* Search bar. */}
           <ServerSearch
             data={[
               {
@@ -106,6 +112,90 @@ export default async function ServerSidebar({ serverId }: ServerSidebarProps) {
               },
             ]}
           />
+          <Separator className="my-2 rounded-md bg-zinc-200 dark:bg-zinc-700" />
+          {/* Text channels. */}
+          {!!textChannels?.length && (
+            <article className="mb-2">
+              <ServerSection
+                sectionType="channels"
+                channelType={ChannelType.TEXT}
+                role={role}
+                label="Text Channels"
+              />
+              <section className="space-y-[2px]">
+                {textChannels.map((channel) => (
+                  <ServerChannel
+                    key={channel.id}
+                    channel={channel}
+                    server={server}
+                    role={role}
+                  />
+                ))}
+              </section>
+            </article>
+          )}
+          {/* Voice channels. */}
+          {!!audioChannels?.length && (
+            <article className="mb-2">
+              <ServerSection
+                sectionType="channels"
+                channelType={ChannelType.AUDIO}
+                role={role}
+                label="Voice Channels"
+              />
+              <section className="space-y-[2px]">
+                {audioChannels.map((channel) => (
+                  <ServerChannel
+                    key={channel.id}
+                    channel={channel}
+                    server={server}
+                    role={role}
+                  />
+                ))}
+              </section>
+            </article>
+          )}
+          {/* Video channels. */}
+          {!!videoChannels?.length && (
+            <article className="mb-2">
+              <ServerSection
+                sectionType="channels"
+                channelType={ChannelType.VIDEO}
+                role={role}
+                label="Video Channels"
+              />
+              <section className="space-y-[2px]">
+                {videoChannels.map((channel) => (
+                  <ServerChannel
+                    key={channel.id}
+                    channel={channel}
+                    server={server}
+                    role={role}
+                  />
+                ))}
+              </section>
+            </article>
+          )}
+          {/* Members. */}
+          {!!members?.length && (
+            <article className="mb-2">
+              <ServerSection
+                sectionType="members"
+                role={role}
+                label="Members"
+                server={server}
+              />
+              <section className="space-y-[2px]">
+                {members.map((member) => (
+                  <ServerMember
+                    key={member.id}
+                    member={member}
+                    server={server}
+                  />
+                ))}
+              </section>
+            </article>
+          )}
         </div>
       </ScrollArea>
     </div>

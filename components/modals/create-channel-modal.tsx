@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import * as z from "zod";
@@ -51,7 +51,9 @@ const formSchema = z.object({
 export default function CreateChannelModal() {
   const router = useRouter();
   const params = useParams();
-  const { isOpen, onClose, type } = useModal();
+
+  const { isOpen, onClose, type, data } = useModal();
+  const { channelType } = useMemo(() => data, [data]);
 
   const isModalOpen = useMemo(
     () => isOpen && type === "createChannel",
@@ -60,8 +62,13 @@ export default function CreateChannelModal() {
 
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: "", type: ChannelType.TEXT },
+    defaultValues: { name: "", type: channelType || ChannelType.TEXT },
   });
+
+  useEffect(() => {
+    if (!!channelType) form.setValue("type", channelType);
+    else form.setValue("type", ChannelType.TEXT);
+  }, [form, channelType]);
 
   const isLoading = useMemo(
     () => form.formState.isSubmitting,
@@ -116,6 +123,7 @@ export default function CreateChannelModal() {
                       <Input
                         disabled={isLoading}
                         placeholder="Enter a channel name"
+                        autoComplete="off"
                         className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0 focus-visible:ring-offset-0"
                         {...field}
                       />
