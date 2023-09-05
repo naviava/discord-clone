@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import { useRouter, useParams } from "next/navigation";
 
 import * as z from "zod";
 import axios from "axios";
@@ -10,6 +11,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Member, MemberRole, Profile } from "@prisma/client";
 import { Edit, FileIcon, ShieldAlert, ShieldCheck, Trash } from "lucide-react";
+
+import useModal from "@/hooks/use-modal-store";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -56,8 +59,10 @@ export default function ChatItem({
   socketUrl,
   socketQuery,
 }: ChatItemProps) {
+  const router = useRouter();
+  const params = useParams();
+  const { onOpen } = useModal();
   const [isEditing, setIsEditing] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -110,6 +115,11 @@ export default function ChatItem({
   );
   const isImage = useMemo(() => !isPdf && fileUrl, [isPdf, fileUrl]);
 
+  const handleMemberClick = useCallback(() => {
+    if (member.id === currentMember.id) return null;
+    router.push(`/servers/${params?.serverId}/conversations/${member.id}`);
+  }, [member.id, currentMember.id, router, params?.serverId]);
+
   const onSubmit = useCallback(
     async (values: z.infer<typeof formSchema>) => {
       try {
@@ -132,13 +142,19 @@ export default function ChatItem({
     <article className="group relative flex w-full items-center p-4 transition hover:bg-black/5">
       <div className="group flex w-full items-start gap-x-2">
         {/* Message sender's avatar. */}
-        <div className="cursor-pointer transition hover:drop-shadow-md">
+        <div
+          onClick={handleMemberClick}
+          className="cursor-pointer transition hover:drop-shadow-md"
+        >
           <UserAvatar src={member.profile.imageUrl} />
         </div>
         <div className="flex w-full flex-col">
           <div className="flex items-center gap-x-2">
             <div className="flex items-center">
-              <p className="cursor-pointer text-sm font-semibold hover:underline">
+              <p
+                onClick={handleMemberClick}
+                className="cursor-pointer text-sm font-semibold hover:underline"
+              >
                 {member.profile.name}
               </p>
               <ActionTooltip label={member.role}>
@@ -239,7 +255,15 @@ export default function ChatItem({
             </ActionTooltip>
           )}
           <ActionTooltip label="Delete">
-            <Trash className="ml-auto h-4 w-4 cursor-pointer text-zinc-500 transition hover:text-zinc-600 dark:hover:text-zinc-300" />
+            <Trash
+              onClick={() =>
+                onOpen("deleteMessage", {
+                  apiUrl: `${socketUrl}/${id}`,
+                  query: socketQuery,
+                })
+              }
+              className="ml-auto h-4 w-4 cursor-pointer text-zinc-500 transition hover:text-zinc-600 dark:hover:text-zinc-300"
+            />
           </ActionTooltip>
         </div>
       )}
