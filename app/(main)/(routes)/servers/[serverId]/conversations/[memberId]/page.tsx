@@ -2,10 +2,13 @@ import { redirect } from "next/navigation";
 
 import { redirectToSignIn } from "@clerk/nextjs";
 
+import ChatInput from "@/components/chat/chat-input";
+import ChatHeader from "@/components/chat/chat-header";
+import ChatMessages from "@/components/chat/chat-messages";
+
 import db from "@/lib/db";
 import currentProfile from "@/lib/current-profile";
 import fetchConversation from "@/lib/fetchConversation";
-import ChatHeader from "@/components/chat/chat-header";
 
 interface ConversationPageProps {
   params: { memberId: string; serverId: string };
@@ -45,6 +48,23 @@ export default async function ConversationPage({
         imageUrl={otherMember.profile.imageUrl}
         serverId={params.serverId}
         type="conversation"
+      />
+      <ChatMessages
+        member={currentMember}
+        name={otherMember.profile.name}
+        chatId={conversation.id}
+        type="conversation"
+        apiUrl="/api/direct-messages"
+        paramKey="conversationId"
+        paramValue={conversation.id}
+        socketUrl="/api/socket/direct-messages"
+        socketQuery={{ conversationId: conversation.id }}
+      />
+      <ChatInput
+        name={otherMember.profile.name}
+        type="conversation"
+        apiUrl="/api/socket/direct-messages"
+        query={{ conversationId: conversation.id }}
       />
     </div>
   );
