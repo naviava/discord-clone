@@ -1,17 +1,19 @@
 "use client";
 
 import { memo, useCallback, useMemo } from "react";
+import { useRouter } from "next/navigation";
 
 import * as z from "zod";
 import axios from "axios";
 import qs from "query-string";
 import { useForm } from "react-hook-form";
-import { Plus, Smile } from "lucide-react";
+import { Plus } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import useModal from "@/hooks/use-modal-store";
 
 import { Input } from "@/components/ui/input";
+import EmojiPicker from "@/components/emoji-picker";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 
 interface ChatInputProps {
@@ -26,6 +28,7 @@ const formSchema = z.object({
 });
 
 function ChatInput({ apiUrl, query, name, type }: ChatInputProps) {
+  const router = useRouter();
   const { onOpen } = useModal();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -48,11 +51,12 @@ function ChatInput({ apiUrl, query, name, type }: ChatInputProps) {
 
         await axios.post(url, values);
         form.reset();
+        router.refresh();
       } catch (err) {
         console.log(err);
       }
     },
-    [apiUrl, query, form],
+    [apiUrl, query, form, router],
   );
 
   return (
@@ -79,12 +83,17 @@ function ChatInput({ apiUrl, query, name, type }: ChatInputProps) {
                     placeholder={`Message ${
                       type === "conversation" ? name : "#" + name
                     }`}
+                    autoComplete="off"
                     className="border-0 border-none bg-zinc-200/90 px-14 py-6 text-zinc-600 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-zinc-700/75 dark:text-zinc-200"
                     {...field}
                   />
                   {/* Emoji keyboard. */}
                   <div className="absolute right-8 top-7">
-                    <Smile />
+                    <EmojiPicker
+                      onChange={(emoji: string) =>
+                        field.onChange(`${field.value}${emoji}`)
+                      }
+                    />
                   </div>
                 </div>
               </FormControl>
