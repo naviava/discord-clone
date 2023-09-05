@@ -2,12 +2,16 @@
 
 import { Fragment, useMemo } from "react";
 
+import { format } from "date-fns";
 import { Loader2, ServerCrash } from "lucide-react";
 import { Member, Message, Profile } from "@prisma/client";
 
 import useChatQuery from "@/hooks/use-chat-query";
 
+import ChatItem from "./chat-item";
 import ChatWelcome from "./chat-welcome";
+
+const DATE_FORMAT = "d MMM yyyy, HH:mm";
 
 type MessageWithMemberWithProfile = Message & {
   member: Member & {
@@ -43,8 +47,6 @@ export default function ChatMessages({
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     useChatQuery({ queryKey, apiUrl, paramKey, paramValue });
 
-  console.log(data);
-
   if (status === "loading") {
     return (
       <div className="flex flex-1 flex-col items-center justify-center">
@@ -75,7 +77,19 @@ export default function ChatMessages({
         {data?.pages?.map((group, idx) => (
           <Fragment key={idx}>
             {group.messages.map((message: MessageWithMemberWithProfile) => (
-              <div key={message.id}>{message.content}</div>
+              <ChatItem
+                key={message.id}
+                id={message.id}
+                currentMember={member}
+                member={message.member}
+                content={message.content}
+                fileUrl={message.fileUrl}
+                isDeleted={message.deleted}
+                timestamp={format(new Date(message.createdAt), DATE_FORMAT)}
+                isUpdated={message.updatedAt !== message.createdAt}
+                socketUrl={socketUrl}
+                socketQuery={socketQuery}
+              />
             ))}
           </Fragment>
         ))}
