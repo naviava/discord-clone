@@ -51,5 +51,5 @@ export default function useChatScroll({
         () => bottomRef.current?.scrollIntoView({ behavior: "smooth" }),
         300,
       );
-  }, [bottomRef, chatRef, hasInitialized]);
+  }, [bottomRef, chatRef, hasInitialized, count]);
 }
